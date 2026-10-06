@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>모양을 찾아볼까요</title>
+<style>
+*{box-sizing:border-box}
+:root{--navy:#18324b;--cream:#fffdf7;--pink:#fbeee9;--mint:#e7f6f4;--yellow:#fff7dc;--red:#c94836;--gold:#a87300;--teal:#147c7b}
+body{margin:0;background:var(--cream);font-family:"Noto Sans KR","Malgun Gothic",Arial,sans-serif;color:var(--navy)}
+button{font:inherit;cursor:pointer}
+.wrap{width:min(1040px,94vw);margin:22px auto}
+.hero{border:2px solid var(--navy);border-radius:30px;background:linear-gradient(110deg,#fff7dc,#e7f6f4);box-shadow:8px 9px 0 var(--navy);padding:48px 36px 40px;text-align:center}
+.kicker{font-size:14px;font-weight:800;letter-spacing:.2px;margin-bottom:18px}
+h1{font-size:34px;margin:0 0 16px;font-weight:900;letter-spacing:-1.5px}
+.shapes{display:flex;justify-content:center;align-items:center;gap:38px;margin:12px 0 28px}
+.square{width:52px;height:52px;background:#f46c5b;border:4px solid var(--navy);box-shadow:2px 3px 0 #cfd3d1}
+.triangle{width:0;height:0;border-left:33px solid transparent;border-right:33px solid transparent;border-bottom:58px solid #f7b942;filter:drop-shadow(2px 3px 0 #cfd3d1);position:relative}
+.triangle:after{content:"";position:absolute;left:-28px;top:7px;border-left:28px solid transparent;border-right:28px solid transparent;border-bottom:49px solid #f7b942}
+.circle{width:57px;height:57px;border-radius:50%;background:#43a7a7;border:4px solid var(--navy)}
+.hero p{font-size:18px;margin:0 0 28px;color:#38556d}
+.studentBtns{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+.nameBtn{width:270px;padding:18px;border:2px solid var(--navy);border-radius:18px;background:#fbeee9;box-shadow:5px 5px 0 #cbd2d0;color:var(--red);font-size:24px;font-weight:900}
+.nameBtn:nth-child(2){background:#e7f6f4;color:var(--teal)}
+.nameBtn:active,.navBtn:active,.plus:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #cbd2d0}
+.navRow{display:flex;justify-content:center;gap:10px;margin-top:24px;flex-wrap:wrap}
+.navBtn{border:2px solid var(--navy);border-radius:17px;background:white;box-shadow:4px 5px 0 #cbd2d0;padding:12px 18px;font-weight:900;color:var(--navy)}
+.screen{display:none}.screen.active{display:block}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 12px;flex-wrap:wrap}
+.pill{border:1.7px solid var(--navy);border-radius:20px;padding:8px 14px;background:#fff;font-weight:800}
+.pill:before{content:"♙ ";font-size:16px}
+.topActions{display:flex;gap:10px}
+.title{font-size:34px;font-weight:900;margin:10px 0 6px;letter-spacing:-1.5px}
+.sub{font-size:15px;margin:0 0 24px}
+.shapeRow{border:2px solid var(--navy);border-radius:22px;padding:16px 18px;margin:16px 0;display:grid;grid-template-columns:150px 1fr 1fr;gap:12px;box-shadow:5px 6px 0 #d9ddda}
+.shapeRow.pink{background:#fff0eb}.shapeRow.yellow{background:#fff8df}.shapeRow.mint{background:#e9f7f5}
+.shapeLabel{border:1px dashed #bdc8cc;border-radius:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:150px;gap:9px}
+.shapeLabel .miniSquare{width:45px;height:45px;background:#f46c5b;border:2px solid var(--navy)}
+.shapeLabel .miniTriangle{width:0;height:0;border-left:26px solid transparent;border-right:26px solid transparent;border-bottom:46px solid #f7b942}
+.shapeLabel .miniCircle{width:48px;height:48px;border-radius:50%;background:#43a7a7;border:2px solid var(--navy)}
+.shapeName{font-size:23px;font-weight:900}.pink .shapeName{color:var(--red)}.yellow .shapeName{color:var(--gold)}.mint .shapeName{color:var(--teal)}
+.photoBox{border:1px dashed #b8c4c8;border-radius:17px;min-height:150px;background:rgba(255,255,255,.55);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.plus{width:50px;height:50px;border:1.8px solid var(--navy);border-radius:50%;background:white;box-shadow:4px 4px 0 #d6dad8;font-size:28px;font-weight:900;color:var(--red)}
+.yellow .plus{color:var(--gold)}.mint .plus{color:var(--teal)}
+.photoBox img{width:100%;height:100%;min-height:150px;object-fit:cover;position:absolute;inset:0}
+.photoNum{position:absolute;top:7px;left:7px;background:rgba(24,50,75,.8);color:white;border-radius:12px;padding:3px 7px;font-size:11px;font-weight:800;z-index:2}
+.bottom{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+.complete{border:2px solid var(--navy);border-radius:16px;background:#dff2ef;box-shadow:4px 5px 0 #cbd2d0;padding:12px 18px;font-weight:900;color:var(--navy)}
+.hidden{display:none!important}
+.dashboardHero{border:2px solid var(--navy);border-radius:27px;background:linear-gradient(110deg,#fff7dc,#e7f6f4);box-shadow:8px 8px 0 var(--navy);padding:24px 24px 28px;margin-bottom:24px}
+.dashboardHero .smallTitle{font-weight:800;font-size:14px}.dashboardHero h2{font-size:30px;margin:14px 0 7px}.dashboardHero p{margin:0;font-size:15px}
+.dashGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.studentDash{border:2px solid var(--navy);border-radius:22px;padding:18px 20px;background:#fff0eb}.studentDash.mint{background:#e9f7f5}
+.studentDash h3{font-size:24px;margin:0 0 7px}.found{font-weight:900;margin-bottom:16px}
+.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}.count{background:rgba(255,255,255,.7);border:1px solid #d2d9dc;border-radius:12px;padding:9px;text-align:center}.count b{display:block;font-size:20px;margin-top:4px}
+.progressText{font-weight:800;margin:10px 0 14px}.dashShape{background:rgba(255,255,255,.7);border:1px solid #d2d9dc;border-radius:14px;padding:10px;margin:9px 0}.dashShape h4{margin:0 0 8px}.thumbs{display:flex;gap:7px}.thumb{width:56px;height:56px;border:1px dashed #9eb0b7;border-radius:10px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;color:#71808a;cursor:pointer}.thumb img{width:100%;height:100%;object-fit:cover}.goStudent{margin-top:10px;border:2px solid var(--navy);border-radius:15px;background:white;box-shadow:4px 4px 0 #cbd2d0;padding:10px 14px;font-weight:900}
+.reset{background:#f46c5b;color:var(--navy)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;font-weight:800;display:none;z-index:20}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}.modal.show{display:flex}.modal img{max-width:94vw;max-height:88vh;border-radius:14px}.modal button{position:absolute;right:18px;top:16px;border:0;border-radius:50%;width:42px;height:42px;font-size:24px}
+@media(max-width:760px){
+ .hero{padding:34px 18px 28px}.hero h1{font-size:28px}.shapeRow{grid-template-columns:105px 1fr 1fr;padding:10px}.shapeLabel{min-height:125px}.photoBox{min-height:125px}.photoBox img{min-height:125px}.title{font-size:28px}.dashGrid{grid-template-columns:1fr}
+ .nameBtn{width:100%}.bottom{gap:8px}.topActions{width:100%;justify-content:flex-end}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 첫 화면 -->
+<section id="home" class="screen active">
+  <div class="hero">
+    <div class="kicker">1학년 수학 · 모양 찾기</div>
+    <h1>모양을 찾아볼까요</h1>
+    <div class="shapes"><div class="square"></div><div class="triangle"></div><div class="circle"></div></div>
+    <p>내 이름을 누르고 교실에서 모양을 찾아 사진을 찍어 보아요!</p>
+    <div class="studentBtns">
+      <button class="nameBtn" onclick="openStudent('김지완')">✦<br>김지완</button>
+      <button class="nameBtn" onclick="openStudent('최서연')">✦<br>최서연</button>
+    </div>
+  </div>
+  <div class="navRow"><button class="navBtn" onclick="openTeacher()">교사 대시보드</button></div>
+</section>
+
+<!-- 학생 화면 -->
+<section id="student" class="screen">
+  <div class="topbar">
+    <div class="pill" id="studentPill">김지완</div>
+    <div class="topActions"><button class="navBtn" onclick="openHome()">첫 화면</button><button class="navBtn" onclick="openTeacher()">교사 대시보드</button></div>
+  </div>
+  <div class="title">우리 주변에서 네모, 세모, 동그라미를 찾아 보아요!</div>
+  <div class="sub">+를 눌러 사진을 찍어 보아요!</div>
+  <div id="studentRows"></div>
+  <div class="bottom"><button class="complete" onclick="completeActivity()">활동 완료하기</button><button class="navBtn" onclick="openTeacher()">교사 대시보드</button></div>
+</section>
+
+<!-- 교사 -->
+<section id="teacher" class="screen">
+  <div class="dashboardHero">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap">
+      <div><div class="smallTitle">교사용 확인 화면</div><h2>교사 대시보드</h2><p>학생별 도형 사진, 활동 진행 상태와 완료 여부를 확인할 수 있어요.</p></div>
+      <div class="topActions"><button class="navBtn reset" onclick="resetAll()">사진 촬영 초기화</button><button class="navBtn" onclick="openHome()">첫 화면으로</button></div>
+    </div>
+  </div>
+  <div class="dashGrid" id="dashGrid"></div>
+</section>
+
+</div>
+<div id="toast" class="toast"></div>
+<div id="modal" class="modal" onclick="closeModal()"><button onclick="closeModal();event.stopPropagation()">×</button><img id="modalImg" onclick="event.stopPropagation()"></div>
+
+<script>
+const DB="https://shapeexplorer-7aa71-default-rtdb.firebaseio.com";
+const ROOT="shapeExplorer/students";
+const STUDENTS=["김지완","최서연"];
+const SHAPES=[
+ {key:"square",name:"네모",cls:"pink",kind:"square",color:"red"},
+ {key:"triangle",name:"세모",cls:"yellow",kind:"triangle",color:"gold"},
+ {key:"circle",name:"동그라미",cls:"mint",kind:"circle",color:"teal"}
+];
+let state={};
+let currentStudent=null;
+let pollTimer=null;
+function blank(){return {completed:false,square:["",""],triangle:["",""],circle:["",""]}}
+for(const s of STUDENTS)state[s]=blank();
+
+async function getAll(){
+ const r=await fetch(DB+"/"+ROOT+".json",{cache:"no-store"});
+ if(!r.ok)throw Error("DB read");
+ return await r.json();
+}
+async function putStudent(s){
+ const r=await fetch(DB+"/"+ROOT+"/"+encodeURIComponent(s)+".json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(state[s])});
+ if(!r.ok)throw Error("DB write");
+}
+async function putAll(){
+ for(const s of STUDENTS) await putStudent(s);
+}
+function normalize(x){
+ const d=blank(); if(!x)return d;
+ d.completed=!!x.completed;
+ for(const sh of SHAPES)d[sh.key]=Array.isArray(x[sh.key])?[x[sh.key][0]||"",x[sh.key][1]||""]:[ "", "" ];
+ return d;
+}
+function show(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo(0,0)}
+function openHome(){show("home")}
+function openStudent(s){currentStudent=s;document.getElementById("studentPill").textContent="♙ "+s;renderStudent();show("student")}
+function openTeacher(){renderTeacher();show("teacher");startPolling()}
+function toast(t){const x=document.getElementById("toast");x.textContent=t;x.style.display="block";clearTimeout(window.__toast);window.__toast=setTimeout(()=>x.style.display="none",1800)}
+function shapeMarkup(sh,i,src){
+ return `<div class="photoBox" id="box-${sh.key}-${i}" onclick="choosePhoto('${sh.key}',${i})">
+   ${src?`<span class="photoNum">${i+1}</span><img src="${src}" alt="${sh.name} 사진 ${i+1}">`:`<button class="plus" aria-label="${sh.name} 사진 ${i+1}">+</button>`}
+   <input id="file-${sh.key}-${i}" class="hidden" type="file" accept="image/*" capture="environment" onchange="fileChosen('${sh.key}',${i},this.files[0])">
+ </div>`;
+}
+function renderStudent(){
+ const d=state[currentStudent]||blank();
+ document.getElementById("studentRows").innerHTML=SHAPES.map(sh=>`
+  <div class="shapeRow ${sh.cls}">
+    <div class="shapeLabel">
+      <div class="mini${sh.kind[0].toUpperCase()+sh.kind.slice(1)}"></div>
+      <div class="shapeName">${sh.name}</div>
+    </div>
+    ${shapeMarkup(sh,0,d[sh.key][0])}
+    ${shapeMarkup(sh,1,d[sh.key][1])}
+  </div>`).join("");
+}
+function choosePhoto(shape,i){document.getElementById(`file-${shape}-${i}`).click()}
+window.choosePhoto=choosePhoto;
+async function fileChosen(shape,i,file){
+ if(!file)return;
+ toast("사진 준비 중…");
+ const img=await compress(file);
+ state[currentStudent][shape][i]=img;
+ try{await putStudent(currentStudent);renderStudent();toast("사진이 저장됐어요!")}
+ catch(e){toast("저장에 실패했어요. Firebase 설정을 확인해주세요.")}
+}
+function compress(file){
+ return new Promise((resolve,reject)=>{
+  const r=new FileReader();
+  r.onload=ev=>{
+   const im=new Image();
+   im.onload=()=>{
+    const max=900,sc=Math.min(1,max/Math.max(im.width,im.height));
+    const c=document.createElement("canvas");c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);
+    c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+    resolve(c.toDataURL("image/jpeg",.72));
+   };im.onerror=reject;im.src=ev.target.result;
+  };r.onerror=reject;r.readAsDataURL(file);
+ });
+}
+async function completeActivity(){
+ const d=state[currentStudent];
+ if(!SHAPES.every(sh=>d[sh.key].every(Boolean))){toast("사진을 6장 모두 찍어 주세요!");return}
+ d.completed=true;
+ try{await putStudent(currentStudent);toast("활동 완료! 선생님 화면에 표시됐어요.")}
+ catch(e){toast("저장에 실패했어요.")}
+}
+function renderTeacher(){
+ document.getElementById("dashGrid").innerHTML=STUDENTS.map((s,si)=>{
+  const d=state[s]||blank(),counts=SHAPES.map(sh=>d[sh.key].filter(Boolean).length),total=counts.reduce((a,b)=>a+b,0);
+  return `<div class="studentDash ${si===1?'mint':''}">
+   <h3>${s}</h3>
+   <div class="found">찾은 도형: ${total?SHAPES.filter(sh=>d[sh.key].some(Boolean)).map(sh=>sh.name).join(", "):"아직 사진을 찍지 않았어요"}</div>
+   <div class="counts">${SHAPES.map((sh,i)=>`<div class="count" style="color:${sh.color==='red'?'#c94836':sh.color==='gold'?'#a87300':'#147c7b'}">${sh.name}<b>${counts[i]}</b></div>`).join("")}</div>
+   <div style="background:rgba(255,255,255,.65);border-radius:12px;padding:10px;font-weight:800">${d.completed?'🟢 활동 완료!':'🟡 활동 진행 중'}</div>
+   <div class="progressText">전체 진행: 사진 ${total} / 6장</div>
+   ${SHAPES.map(sh=>`<div class="dashShape"><h4>${sh.name} 사진</h4><div class="thumbs">${[0,1].map(i=>d[sh.key][i]?`<div class="thumb" onclick="showPhoto('${encodeURIComponent(d[sh.key][i])}')"><img src="${d[sh.key][i]}"></div>`:`<div class="thumb">사진 없음</div>`).join("")}</div></div>`).join("")}
+   <button class="goStudent" onclick="openStudent('${s}')">${s} 활동으로</button>
+  </div>`
+ }).join("");
+}
+window.showPhoto=function(encoded){document.getElementById("modalImg").src=decodeURIComponent(encoded);document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show");document.getElementById("modalImg").src=""}
+window.closeModal=closeModal;
+async function sync(){
+ try{
+  const x=await getAll();
+  for(const s of STUDENTS)state[s]=normalize(x&&x[s]);
+  if(document.getElementById("teacher").classList.contains("active"))renderTeacher();
+ }catch(e){}
+}
+function startPolling(){clearInterval(pollTimer);sync();pollTimer=setInterval(sync,1200)}
+async function resetAll(){
+ if(!confirm("두 학생의 사진과 활동 상태를 모두 초기화할까요?"))return;
+ for(const s of STUDENTS)state[s]=blank();
+ try{await putAll();renderTeacher();toast("사진 촬영을 초기화했어요.")}catch(e){toast("초기화에 실패했어요.")}
+}
+(async()=>{try{const x=await getAll();for(const s of STUDENTS)state[s]=normalize(x&&x[s])}catch(e){} })();
+</script>
+</body>
+</html>
